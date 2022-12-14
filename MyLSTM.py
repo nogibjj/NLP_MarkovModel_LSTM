@@ -1,4 +1,4 @@
-"""Several iterations and playing around with building a LSTM model in torch.  
+"""Several iterations and playing around with building an LSTM model in torch.  
 Much of the working portion of this is stolen from KD Nuggets 
 (https://www.kdnuggets.com/2020/07/pytorch-lstm-text-generation-tutorial.html), 
 although there are other parts that were built from reviewing PyTorch tutorials."""
