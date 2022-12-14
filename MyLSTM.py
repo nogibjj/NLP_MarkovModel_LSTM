@@ -77,7 +77,7 @@ def main1():
     # print(output, hn)
 
 def main2():
-    corpus = getCorpus()[:30]
+    corpus = getCorpus()[:10]
     vocab_size = len(set(corpus))
     wordToOneHot, oneHotToWord = oneHot(set(corpus))
     eachGram = 28
@@ -146,7 +146,7 @@ class Dataset(torch.utils.data.Dataset):
         self.words_indexes = [self.word_to_index[w] for w in self.words]
 
     def load_words(self):
-        return getCorpus()[:200]
+        return getCorpus()[:10006]
 
     def get_uniq_words(self):
         word_counts = set((self.words))
@@ -189,10 +189,13 @@ def train(dataset, model, args):
 
 
 # Predict function from KD Nuggets
-def predict(dataset, model, text, next_words=100):
+def predict(dataset, model, text, next_words=10):
     model.eval()
 
-    words = text.split(' ')
+    if type(text) == type(str()):
+        words = text.split(' ')
+    else:
+        words = text
     state_h, state_c = model.init_state(len(words))
 
     for i in range(0, next_words):
@@ -209,12 +212,13 @@ def predict(dataset, model, text, next_words=100):
 
 # Execution functions from KD Nuggets
 def main3():
-    args = {'max_epochs': 100, 'batch_size': 4, 'sequence_length': 4 }
+    args = {'max_epochs': 5, 'batch_size': 1000, 'sequence_length': 5 }
     dataset = Dataset(args)
     model = MyLSTM(dataset)
 
     train(dataset, model, args)
-    print(predict(dataset, model, text='sense and'))
+    test = getCorpus()[10006:]
+    print(predict(dataset, model, text=test[:5]))
 
 
 

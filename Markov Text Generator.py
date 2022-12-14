@@ -19,7 +19,7 @@ def finish_sentence(sentence, n, corpus, deterministic=False):
     # Create a deterministic append to the sentence
     if deterministic:
         sentence.append(max(count, key=count.get))
-        pass
+        return sentence
     # Create a random append to the sentence
     else:
         sentence.append(
@@ -32,8 +32,7 @@ def finish_sentence(sentence, n, corpus, deterministic=False):
                 k=1,
             )[0]
         )
-        pass
-    pass
+        return sentence
 
 
 # define loop function to allow for back-off recursion
@@ -74,8 +73,12 @@ if __name__ == "__main__":
     sentence = ["how", "many", "days", "in", "a"]
     n = 5
     corpus = nltk.word_tokenize(nltk.corpus.gutenberg.raw("austen-sense.txt").lower())
+    train = corpus[:10006]
+    test = corpus[10006:]
     deterministic = False
+    sentence = test[:5]
     while (sentence[-1] not in [".", "!", "?"]) and (len(sentence) < 10):
-        finish_sentence(sentence, n, corpus, deterministic)
+        sentence = finish_sentence(sentence, n, corpus, deterministic)
         pass
     print(sentence)
+    print(test[:10])
