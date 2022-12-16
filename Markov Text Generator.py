@@ -73,12 +73,35 @@ if __name__ == "__main__":
     sentence = ["how", "many", "days", "in", "CANTO"]
     n = 5
     corpus = nltk.word_tokenize(nltk.corpus.gutenberg.raw("austen-sense.txt").lower())
-    train = corpus[:10006]
+    trainingData = corpus[:10006]
     test = corpus[10006:]
     deterministic = False
     # sentence = test[:5]
-    while (sentence[-1] not in [".", "!", "?"]) and (len(sentence) < 10):
-        sentence = finish_sentence(sentence, n, corpus, deterministic)
+    # while (sentence[-1] not in [".", "!", "?"]) and (len(sentence) < 10):
+    #     sentence = finish_sentence(sentence, n, train, deterministic)
+    #     pass
+    for eachStart in [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]:
+        train = corpus[eachStart:]
+        print("Train:")
+        print(train[:10])
+        print("Prediction:")
+        sentence = train[:5]
+        while (len(sentence) < 10):
+            sentence = finish_sentence(sentence, n, trainingData, deterministic)
         pass
-    print(sentence)
-    print(test[:10])
+        print(sentence)
+        print("Accuracy:")
+        print(sum([sentence[i] == train[i] for i in range(5,10)])/5)
+    print("Testing Data")
+    for eachStart in [10006, 10014, 10035, 10059, 10091, 10099, 10106, 10120, 10135, 10146]:
+        test = corpus[eachStart:]
+        print("Test:")
+        print(test[:10])
+        print("Prediction:")
+        sentence = test[:5]
+        while (len(sentence) < 10):
+            sentence = finish_sentence(sentence, n, trainingData, deterministic)
+        pass
+        print(sentence)
+        print("Accuracy:")
+        print(sum([sentence[i] == test[i] for i in range(5,10)])/5)
