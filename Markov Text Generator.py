@@ -70,13 +70,13 @@ def buildCount(sentence, n, corpus):
 # define main function
 if __name__ == "__main__":
     # Test the function
-    sentence = ["how", "many", "days", "in", "a"]
+    sentence = ["how", "many", "days", "in", "CANTO"]
     n = 5
     corpus = nltk.word_tokenize(nltk.corpus.gutenberg.raw("austen-sense.txt").lower())
     train = corpus[:10006]
     test = corpus[10006:]
     deterministic = False
-    sentence = test[:5]
+    # sentence = test[:5]
     while (sentence[-1] not in [".", "!", "?"]) and (len(sentence) < 10):
         sentence = finish_sentence(sentence, n, corpus, deterministic)
         pass
