@@ -130,7 +130,6 @@ if __name__ == "__main__":
     # corpus = nltk.word_tokenize(nltk.corpus.gutenberg.raw("austen-sense.txt").lower())
     filePath = 'syntheticData.txt'
     corpus = getSyntheticData(filePath)
-    print(corpus[:30])
     trainingData = corpus[:10006]
     test = corpus[10006:]
     deterministic = False
