@@ -66,20 +66,26 @@ def buildCount(sentence, n, corpus):
         pass
     return count
 
+def createSyntheticData(sentence, filePath):
+    while (len(sentence) < 15000):
+            sentence = finish_sentence(sentence, n, trainingData, deterministic)
+    with open(filePath, 'w') as file:
+        file.write(sentence[0])
+        for eachWord in sentence[1:]:
+            file.write(" " + eachWord)
 
-# define main function
-if __name__ == "__main__":
-    # Test the function
-    sentence = ["how", "many", "days", "in", "CANTO"]
-    n = 4
-    corpus = nltk.word_tokenize(nltk.corpus.gutenberg.raw("austen-sense.txt").lower())
-    trainingData = corpus[:10006]
-    test = corpus[10006:]
-    deterministic = True
-    # sentence = test[:5]
-    # while (sentence[-1] not in [".", "!", "?"]) and (len(sentence) < 10):
-    #     sentence = finish_sentence(sentence, n, train, deterministic)
-    #     pass
+def getSyntheticData(filePath):
+    corpus = []
+    with open(filePath, 'r') as file:
+        for line in file:
+            words = line[:-1].split(" ")
+            corpus.extend(words)
+            pass
+        pass
+    return corpus
+
+def predictionAccuracy(corpus, trainingData, n, deterministic):
+    overallTrainingAccuracy = []
     for eachStart in [10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100]:
         train = corpus[eachStart:]
         print("Train:")
@@ -91,7 +97,10 @@ if __name__ == "__main__":
         pass
         print(sentence)
         print("Accuracy:")
-        print(sum([sentence[i] == train[i] for i in range(5,10)])/5)
+        accuracy = sum([sentence[i] == train[i] for i in range(5,10)])/5
+        print(accuracy)
+        overallTrainingAccuracy.append(accuracy)
+    overallTestAccuracy = []
     print("Testing Data")
     for eachStart in [10006, 10014, 10035, 10059, 10091, 10099, 10106, 10120, 10135, 10146, 10155]:
         test = corpus[eachStart:]
@@ -104,4 +113,30 @@ if __name__ == "__main__":
         pass
         print(sentence)
         print("Accuracy:")
-        print(sum([sentence[i] == test[i] for i in range(5,10)])/5)
+        testAccuracy = sum([sentence[i] == test[i] for i in range(5,10)])/5
+        print(testAccuracy)
+        overallTestAccuracy.append(testAccuracy)
+    print("Training Accuracy:")
+    print(sum(overallTrainingAccuracy)/len(overallTrainingAccuracy))
+    print("Testing Accuracy:")
+    print(sum(overallTestAccuracy)/len(overallTestAccuracy))
+
+
+# define main function
+if __name__ == "__main__":
+    # Test the function
+    sentence = ["how", "many", "days", "in", "CANTO"]
+    n = 4
+    # corpus = nltk.word_tokenize(nltk.corpus.gutenberg.raw("austen-sense.txt").lower())
+    filePath = 'syntheticData.txt'
+    corpus = getSyntheticData(filePath)
+    print(corpus[:30])
+    trainingData = corpus[:10006]
+    test = corpus[10006:]
+    deterministic = False
+    # sentence = test[:5]
+    # while (sentence[-1] not in [".", "!", "?"]) and (len(sentence) < 10):
+    #     sentence = finish_sentence(sentence, n, train, deterministic)
+    #     pass
+    predictionAccuracy(corpus, trainingData, n, deterministic)
+    # createSyntheticData(sentence, filePath)

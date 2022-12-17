@@ -13,7 +13,8 @@ from torch.utils.data import DataLoader
 
 
 def getCorpus():
-    return nltk.word_tokenize(nltk.corpus.gutenberg.raw("austen-sense.txt").lower())
+    # return nltk.word_tokenize(nltk.corpus.gutenberg.raw("austen-sense.txt").lower())
+    return getSyntheticData('syntheticData.txt')
 
 
 # LSTM from KD Nuggets
@@ -133,12 +134,22 @@ def predict(dataset, model, text, next_words=5):
 
     return words
 
+def getSyntheticData(filePath):
+    corpus = []
+    with open(filePath, 'r') as file:
+        for line in file:
+            words = line[:-1].split(" ")
+            corpus.extend(words)
+            pass
+        pass
+    return corpus
 
 # Execution functions from KD Nuggets
 def main():
-    args = {'max_epochs': 5, 'batch_size': 50, 'sequence_length': 5 }
+    args = {'max_epochs': 10, 'batch_size': 20, 'sequence_length': 5 }
     # dataset = Dataset(args)
-    modelPath = 'myLSTM.pt'
+    # modelPath = 'myLSTM.pt'
+    modelPath = 'myLSTMsynth.pt'
     criterion = nn.CrossEntropyLoss()
     checkpoint = torch.load(modelPath)
     dataset = checkpoint['dataset']
@@ -146,15 +157,14 @@ def main():
     model.load_state_dict(checkpoint['model_state_dict'])
     optimizer = optim.Adam(model.parameters(), lr=0.001)
     optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
-    epoch = checkpoint['epoch']
     criterion = checkpoint['loss']
     train(dataset, model, args, criterion, optimizer)
-    torch.save({'epoch': epoch + args['max_epochs'],
-            'model_state_dict': model.state_dict(),
+    torch.save({'model_state_dict': model.state_dict(),
             'optimizer_state_dict': optimizer.state_dict(),
             'loss': criterion,
             'dataset': dataset}, 
 	    modelPath)
+    overallTrainingAccuracy = []
     print("Training Data")
     corpus = getCorpus()
     for eachStart in [10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100]:
@@ -165,7 +175,10 @@ def main():
         prediction = predict(dataset, model, text=trainingData[:5])
         print(prediction)
         print("Accuracy:")
-        print(sum([prediction[i] == trainingData[i] for i in range(5,10)])/5)
+        accuracy = sum([prediction[i] == trainingData[i] for i in range(5,10)])/5
+        print(accuracy)
+        overallTrainingAccuracy.append(accuracy)
+    overallTestAccuracy = []
     print("Testing Data")
     for eachStart in [10006, 10014, 10035, 10059, 10091, 10099, 10106, 10120, 10135, 10146, 10155]:
         test = corpus[eachStart:]
@@ -175,7 +188,14 @@ def main():
         prediction = predict(dataset, model, text=test[:5])
         print(prediction)
         print("Accuracy:")
-        print(sum([prediction[i] == test[i] for i in range(5,10)])/5)
+        testAccuracy = sum([prediction[i] == test[i] for i in range(5,10)])/5
+        print(testAccuracy)
+        overallTestAccuracy.append(testAccuracy)
+    print("Training Accuracy:")
+    print(sum(overallTrainingAccuracy)/len(overallTrainingAccuracy))
+    print("Testing Accuracy:")
+    print(sum(overallTestAccuracy)/len(overallTestAccuracy))
+
 
 
 if __name__ == "__main__":
