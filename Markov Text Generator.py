@@ -71,16 +71,16 @@ def buildCount(sentence, n, corpus):
 if __name__ == "__main__":
     # Test the function
     sentence = ["how", "many", "days", "in", "CANTO"]
-    n = 5
+    n = 4
     corpus = nltk.word_tokenize(nltk.corpus.gutenberg.raw("austen-sense.txt").lower())
     trainingData = corpus[:10006]
     test = corpus[10006:]
-    deterministic = False
+    deterministic = True
     # sentence = test[:5]
     # while (sentence[-1] not in [".", "!", "?"]) and (len(sentence) < 10):
     #     sentence = finish_sentence(sentence, n, train, deterministic)
     #     pass
-    for eachStart in [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]:
+    for eachStart in [10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100]:
         train = corpus[eachStart:]
         print("Train:")
         print(train[:10])
@@ -93,7 +93,7 @@ if __name__ == "__main__":
         print("Accuracy:")
         print(sum([sentence[i] == train[i] for i in range(5,10)])/5)
     print("Testing Data")
-    for eachStart in [10006, 10014, 10035, 10059, 10091, 10099, 10106, 10120, 10135, 10146]:
+    for eachStart in [10006, 10014, 10035, 10059, 10091, 10099, 10106, 10120, 10135, 10146, 10155]:
         test = corpus[eachStart:]
         print("Test:")
         print(test[:10])

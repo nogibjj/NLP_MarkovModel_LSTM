@@ -120,15 +120,15 @@ def predict(dataset, model, text, next_words=5):
         last_word_logits = y_pred[0][-1]
         p = torch.nn.functional.softmax(last_word_logits, dim=0).detach().numpy()
         # Deterministic
-        # maxValue = -1
-        # maxKey = -1
-        # for eachKey in range(len(p)):
-        #     if p[eachKey] > maxValue:
-        #         maxValue = p[eachKey]
-        #         maxKey = eachKey
-        # word_index = maxKey
+        maxValue = -1
+        maxKey = -1
+        for eachKey in range(len(p)):
+            if p[eachKey] > maxValue:
+                maxValue = p[eachKey]
+                maxKey = eachKey
+        word_index = maxKey
         # Probabalistic
-        word_index = np.random.choice(len(last_word_logits), p=p)
+        # word_index = np.random.choice(len(last_word_logits), p=p)
         words.append(dataset.index_to_word[word_index])
 
     return words
@@ -136,7 +136,7 @@ def predict(dataset, model, text, next_words=5):
 
 # Execution functions from KD Nuggets
 def main():
-    args = {'max_epochs': 2, 'batch_size': 5000, 'sequence_length': 5 }
+    args = {'max_epochs': 5, 'batch_size': 50, 'sequence_length': 5 }
     # dataset = Dataset(args)
     modelPath = 'myLSTM.pt'
     criterion = nn.CrossEntropyLoss()
@@ -157,7 +157,7 @@ def main():
 	    modelPath)
     print("Training Data")
     corpus = getCorpus()
-    for eachStart in [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]:
+    for eachStart in [10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100]:
         trainingData = corpus[eachStart:]
         print("Train:")
         print(trainingData[:10])
@@ -167,7 +167,7 @@ def main():
         print("Accuracy:")
         print(sum([prediction[i] == trainingData[i] for i in range(5,10)])/5)
     print("Testing Data")
-    for eachStart in [10006, 10014, 10035, 10059, 10091, 10099, 10106, 10120, 10135, 10146]:
+    for eachStart in [10006, 10014, 10035, 10059, 10091, 10099, 10106, 10120, 10135, 10146, 10155]:
         test = corpus[eachStart:]
         print("Test:")
         print(test[:10])
